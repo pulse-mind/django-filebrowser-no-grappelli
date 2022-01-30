@@ -21,8 +21,8 @@ from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render, HttpResponse
 from django.template import RequestContext as Context
 from django.template.response import TemplateResponse
-from django.utils.encoding import smart_text
-from django.utils.translation import ugettext as _
+from django.utils.encoding import smart_str
+from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.decorators.csrf import csrf_exempt
@@ -601,20 +601,20 @@ class FileBrowserSite(object):
             uploadedfile = handle_file_upload(path, filedata, site=self)
 
             if file_already_exists and OVERWRITE_EXISTING:
-                old_file = smart_text(file_path)
-                new_file = smart_text(uploadedfile)
+                old_file = smart_str(file_path)
+                new_file = smart_str(uploadedfile)
                 self.storage.move(new_file, old_file, allow_overwrite=True)
-                full_path = FileObject(smart_text(old_file), site=self).path_full
+                full_path = FileObject(smart_str(old_file), site=self).path_full
             else:
-                file_name = smart_text(uploadedfile)
+                file_name = smart_str(uploadedfile)
                 filedata.name = os.path.relpath(file_name, path)
-                full_path = FileObject(smart_text(file_name), site=self).path_full
+                full_path = FileObject(smart_str(file_name), site=self).path_full
 
             # set permissions
             if DEFAULT_PERMISSIONS is not None:
                 os.chmod(full_path, DEFAULT_PERMISSIONS)
 
-            f = FileObject(smart_text(file_name), site=self)
+            f = FileObject(smart_str(file_name), site=self)
             signals.filebrowser_post_upload.send(sender=request, path=folder, file=f, site=self)
 
             # let Ajax Upload know whether we saved it or not
